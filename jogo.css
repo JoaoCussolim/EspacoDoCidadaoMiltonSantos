@@ -155,13 +155,10 @@ h2, h3 {
     color: #555;
 }
 
-/* ESTILO DO PLACAR DE DINHEIRO */
 #placar-dinheiro {
     color: #0056b3;
     font-weight: 700;
 }
-
-/* ESTILO PARA BOTÕES DESABILITADOS */
 .opcao-btn:disabled {
     background-color: #a9a9a9;
     cursor: not-allowed;
@@ -172,7 +169,6 @@ h2, h3 {
     background-color: #a9a9a9;
 }
 
-/* ESTILO DO BLOCO DE INCENTIVO FINAL */
 .incentivo-livro {
     background-color: #f8f9fa;
     border-top: 3px solid #007BFF;

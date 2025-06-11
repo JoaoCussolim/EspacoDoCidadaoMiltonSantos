@@ -1,4 +1,3 @@
-// --- ELEMENTOS DA PÁGINA ---
 const telaInicial = document.getElementById('tela-inicial');
 const telaJogo = document.getElementById('tela-jogo');
 const telaFeedback = document.getElementById('tela-feedback');
@@ -16,7 +15,6 @@ const resultadoFinalTextoEl = document.getElementById('resultado-final-texto');
 const reiniciarBtn = document.getElementById('reiniciar-btn');
 
 const perguntas = [
-    // --- PERGUNTAS ORIGINAIS ---
     {
         pergunta: "Como você decide se locomover para o trabalho hoje?",
         opcoes: [
