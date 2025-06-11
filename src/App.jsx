@@ -3,6 +3,7 @@ import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import Header from './components/Header';
 import Hero from './components/Hero';
 import SobreLivro from './components/SobreLivro';
+import Podcast from './components/Podcast'; 
 import SobreAutor from './components/SobreAutor';
 import Importancia from './components/Importancia';
 import Divulgacao from './components/Divulgacao';
