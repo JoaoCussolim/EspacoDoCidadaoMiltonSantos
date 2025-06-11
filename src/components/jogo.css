@@ -1,12 +1,11 @@
-body {
-    font-family: 'Roboto', sans-serif;
-    background-color: #e9ecef;
-    color: #333;
+.jogo-page-wrapper {
     display: flex;
     justify-content: center;
     align-items: center;
+    width: 100%;
     min-height: 100vh;
-    margin: 0;
+    background-color: #e9ecef;
+    padding: 20px 0;
 }
 
 h2, h3 {
@@ -110,7 +109,6 @@ h2, h3 {
     display: none;
 }
 
-/* ESTILOS DA TELA INICIAL DE SELEÇÃO */
 #tela-inicial h2 {
     font-size: 2rem;
     margin-bottom: 10px;

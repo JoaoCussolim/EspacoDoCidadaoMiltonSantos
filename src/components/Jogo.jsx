@@ -1,18 +1,6 @@
-const telaInicial = document.getElementById('tela-inicial');
-const telaJogo = document.getElementById('tela-jogo');
-const telaFeedback = document.getElementById('tela-feedback');
-const telaFinal = document.getElementById('tela-final');
-
-const perguntaTexto = document.getElementById('pergunta-texto');
-const opcoesContainer = document.getElementById('opcoes-container');
-const feedbackTexto = document.getElementById('feedback-texto');
-const proximaPerguntaBtn = document.getElementById('proxima-pergunta-btn');
-const placarDinheiroEl = document.getElementById('placar-dinheiro');
-const placarCidadaoEl = document.getElementById('placar-cidadao');
-const placarConsumidorEl = document.getElementById('placar-consumidor');
-const resultadoFinalTituloEl = document.getElementById('resultado-final-titulo');
-const resultadoFinalTextoEl = document.getElementById('resultado-final-texto');
-const reiniciarBtn = document.getElementById('reiniciar-btn');
+import React, { useState } from 'react';
+import { Link } from 'react-router-dom';
+import './jogo.css'; 
 
 const perguntas = [
     {
@@ -81,91 +69,120 @@ const perguntas = [
     }
 ];
 
-let perfilInicial = '';
-let dinheiro = 0;
-let perguntaAtualIndex = 0;
-let pontosCidadao = 0;
-let pontosConsumidor = 0;
 
-function selecionarClasse(event) {
-    const perfil = event.currentTarget.dataset.perfil;
-    perfilInicial = perfil;
+function Jogo() {
+    const [etapa, setEtapa] = useState('selecao'); 
+    const [perfilInicial, setPerfilInicial] = useState('');
+    const [dinheiro, setDinheiro] = useState(0);
+    const [pontosCidadao, setPontosCidadao] = useState(0);
+    const [pontosConsumidor, setPontosConsumidor] = useState(0);
+    const [perguntaAtualIndex, setPerguntaAtualIndex] = useState(0);
+    const [feedback, setFeedback] = useState('');
 
-    if (perfil === 'trabalhador') {
-        dinheiro = 1800;
-    } else if (perfil === 'media') {
-        dinheiro = 5500;
-    } else if (perfil === 'alta') {
-        dinheiro = 15000;
-    }
-    
-    telaInicial.classList.add('hidden');
-    iniciarJogo();
-}
 
-function iniciarJogo() {
-    perguntaAtualIndex = 0;
-    pontosCidadao = 0;
-    pontosConsumidor = 0;
-    telaFinal.classList.add('hidden');
-    telaFeedback.classList.add('hidden');
-    telaJogo.classList.remove('hidden');
-    atualizarPlacar();
-    mostrarPergunta();
-}
+    const handleSelecionarClasse = (perfil, dinheiroInicial) => {
+        setPerfilInicial(perfil);
+        setDinheiro(dinheiroInicial);
+        setPerguntaAtualIndex(0);
+        setPontosCidadao(0);
+        setPontosConsumidor(0);
+        setEtapa('jogo');
+    };
 
-function mostrarPergunta() {
-    const perguntaAtual = perguntas[perguntaAtualIndex];
-    perguntaTexto.innerText = perguntaAtual.pergunta;
-    opcoesContainer.innerHTML = ''; 
-
-    perguntaAtual.opcoes.forEach(opcao => {
-        const button = document.createElement('button');
-        const custoTexto = `(Custo: R$ ${Math.abs(opcao.custo)},00)`;
-        button.innerHTML = `${opcao.texto} <br><span class="custo">${custoTexto}</span>`;
-        button.classList.add('opcao-btn');
-        
-        if (dinheiro < Math.abs(opcao.custo)) {
-            button.disabled = true;
-            button.title = "Você não tem dinheiro suficiente para esta opção.";
+    const handleSelecionarOpcao = (opcao) => {
+        setDinheiro(dinheiroAtual => dinheiroAtual + opcao.custo);
+        if (opcao.tipo === 'cidadao') {
+            setPontosCidadao(p => p + 1);
+        } else {
+            setPontosConsumidor(p => p + 1);
         }
-        
-        button.addEventListener('click', () => selecionarOpcao(opcao));
-        opcoesContainer.appendChild(button);
-    });
+        setFeedback(opcao.feedback);
+        setEtapa('feedback');
+    };
+
+    const handleProximaPergunta = () => {
+        const proximoIndex = perguntaAtualIndex + 1;
+        if (proximoIndex < perguntas.length) {
+            setPerguntaAtualIndex(proximoIndex);
+            setEtapa('jogo');
+        } else {
+            setEtapa('final');
+        }
+    };
+
+    const handleReiniciar = () => {
+        setEtapa('selecao');
+    };
+
+
+    return (
+        <div className="jogo-page-wrapper">
+            <div className="jogo-container">
+                {etapa === 'selecao' && (
+                    <div id="tela-inicial">
+                        <h2>Ponto de Partida</h2>
+                        <p>A geografia pessoal de cada um define suas possibilidades. Segundo Milton Santos, o espaço não é o mesmo para todos. Escolha seu ponto de partida para começar.</p>
+                        <div id="classes-container">
+                            <button className="classe-btn" onClick={() => handleSelecionarClasse('trabalhador', 1800)}>
+                                <h3>Morador da Periferia</h3>
+                                <p>Você começa com um salário mais baixo, mora longe do centro e depende de transporte público. Cada centavo conta.</p>
+                            </button>
+                            <button className="classe-btn" onClick={() => handleSelecionarClasse('media', 5500)}>
+                                <h3>Morador de Bairro Planejado</h3>
+                                <p>Você tem uma renda confortável, carro próprio e acesso a mais serviços. Suas escolhas são mais flexíveis.</p>
+                            </button>
+                            <button className="classe-btn" onClick={() => handleSelecionarClasse('alta', 15000)}>
+                                <h3>Morador do Centro Expandido</h3>
+                                <p>Sua renda é alta e o tempo é seu maior ativo. O custo das coisas raramente é um problema para você.</p>
+                            </button>
+                        </div>
+                    </div>
+                )}
+
+                {etapa === 'jogo' && (
+                    <div id="tela-jogo">
+                        <div className="placar">
+                            <div id="placar-dinheiro">DINHEIRO: R$ {dinheiro.toFixed(2)}</div>
+                            <div id="placar-cidadao">CIDADÃO: {pontosCidadao}</div>
+                            <div id="placar-consumidor">CONSUMIDOR: {pontosConsumidor}</div>
+                        </div>
+                        <div id="quiz-container">
+                            <h2 id="pergunta-texto">{perguntas[perguntaAtualIndex].pergunta}</h2>
+                            <div id="opcoes-container">
+                                {perguntas[perguntaAtualIndex].opcoes.map((opcao, index) => (
+                                    <button
+                                        key={index}
+                                        className="opcao-btn"
+                                        onClick={() => handleSelecionarOpcao(opcao)}
+                                        disabled={dinheiro < Math.abs(opcao.custo)}
+                                        title={dinheiro < Math.abs(opcao.custo) ? "Você não tem dinheiro suficiente para esta opção." : ""}
+                                    >
+                                        {opcao.texto} <br />
+                                        <span className="custo">(Custo: R$ {Math.abs(opcao.custo)},00)</span>
+                                    </button>
+                                ))}
+                            </div>
+                        </div>
+                    </div>
+                )}
+
+                {etapa === 'feedback' && (
+                    <div id="tela-feedback">
+                        <h3>A Voz de Milton Santos:</h3>
+                        <p id="feedback-texto">"{feedback}"</p>
+                        <button id="proxima-pergunta-btn" onClick={handleProximaPergunta}>Continuar</button>
+                    </div>
+                )}
+
+                {etapa === 'final' && (
+                    <ResultadoFinal pontosCidadao={pontosCidadao} pontosConsumidor={pontosConsumidor} perfilInicial={perfilInicial} onReiniciar={handleReiniciar} />
+                )}
+            </div>
+        </div>
+    );
 }
 
-function selecionarOpcao(opcao) {
-    dinheiro += opcao.custo;
-
-    if (opcao.tipo === 'cidadao') {
-        pontosCidadao++;
-    } else {
-        pontosConsumidor++;
-    }
-
-    atualizarPlacar();
-    feedbackTexto.innerText = `"${opcao.feedback}"`;
-    
-    telaJogo.classList.add('hidden');
-    telaFeedback.classList.remove('hidden');
-}
-
-function proximaPergunta() {
-    perguntaAtualIndex++;
-    if (perguntaAtualIndex < perguntas.length) {
-        telaFeedback.classList.add('hidden');
-        telaJogo.classList.remove('hidden');
-        mostrarPergunta();
-    } else {
-        mostrarResultadoFinal();
-    }
-}
-
-function mostrarResultadoFinal() {
-    telaFeedback.classList.add('hidden');
-    telaFinal.classList.remove('hidden');
-    
+function ResultadoFinal({ pontosCidadao, pontosConsumidor, perfilInicial, onReiniciar }) {
     let titulo, texto, incentivoTexto;
 
     if (pontosCidadao > pontosConsumidor) {
@@ -175,7 +192,6 @@ function mostrarResultadoFinal() {
             texto += " Sua trajetória é uma verdadeira resistência, pois exercer a cidadania com recursos limitados exige um esforço hercúleo.";
         }
         incentivoTexto = "Sua intuição é poderosa. Para aprofundar essa consciência e transformar intuição em ação ainda mais eficaz, a leitura de 'O Espaço do Cidadão' é fundamental. O livro lhe dará as ferramentas teóricas para fortalecer sua luta por um espaço mais justo.";
-
     } else if (pontosConsumidor > pontosCidadao) {
         titulo = "Perfil: Consumidor Inserido";
         texto = "Suas escolhas refletem as lógicas do mercado e da conveniência individual. O sistema o moldou eficientemente como um agente de consumo.";
@@ -183,7 +199,6 @@ function mostrarResultadoFinal() {
             texto += " Muitas vezes, essa não foi uma escolha, mas uma necessidade imposta pela sua geografia pessoal, onde as opções de consumo são as únicas viáveis.";
         }
         incentivoTexto = "Este caminho, muitas vezes imposto, pode levar a uma 'cidadania mutilada'. Entender *por que* essas são as opções mais fáceis é o primeiro passo para a mudança. 'O Espaço do Cidadão' de Milton Santos é a principal obra para diagnosticar essa realidade e vislumbrar novas possibilidades.";
-
     } else {
         titulo = "Perfil: O Dilema Contemporâneo";
         texto = "Você vive o conflito central da nossa era: o ser que deseja ser cidadão, mas é constantemente puxado para ser consumidor. Suas escolhas refletem essa tensão.";
@@ -193,35 +208,21 @@ function mostrarResultadoFinal() {
         incentivoTexto = "Navegar esta tensão é o grande desafio do nosso tempo. 'O Espaço do Cidadão' oferece um mapa para compreender as forças que nos puxam em direções opostas e como, apesar delas, é possível construir um caminho em direção a uma cidadania mais plena.";
     }
 
-    const incentivoHTML = `
-        <div class="incentivo-livro">
-            <h4>Próximo Passo: A Leitura</h4>
-            <p>${incentivoTexto}</p>
-            <a href="index.html#sobre" class="cta-livro">Saiba mais sobre o livro</a>
+    return (
+        <div id="tela-final">
+            <h2 id="resultado-final-titulo">{titulo}</h2>
+            <div id="resultado-final-texto">
+                <p>{texto}</p>
+                <div className="incentivo-livro">
+                    <h4>Próximo Passo: A Leitura</h4>
+                    <p>{incentivoTexto}</p>
+                    <Link to="/#sobre" className="cta-livro">Saiba mais sobre o livro</Link>
+                </div>
+            </div>
+            <button id="reiniciar-btn" onClick={onReiniciar}>Jogar Novamente</button>
+            <Link to="/" className="link-voltar">Voltar ao site principal</Link>
         </div>
-    `;
-
-    resultadoFinalTituloEl.innerText = titulo;
-    resultadoFinalTextoEl.innerHTML = `<p>${texto}</p>${incentivoHTML}`;
+    );
 }
 
-function atualizarPlacar() {
-    placarDinheiroEl.innerText = `DINHEIRO: R$ ${dinheiro.toFixed(2)}`;
-    placarCidadaoEl.innerText = `CIDADÃO: ${pontosCidadao}`;
-    placarConsumidorEl.innerText = `CONSUMIDOR: ${pontosConsumidor}`;
-}
-
-function inicializarOuvintes() {
-    document.querySelectorAll('.classe-btn').forEach(button => {
-        button.addEventListener('click', selecionarClasse);
-    });
-
-    proximaPerguntaBtn.addEventListener('click', proximaPergunta);
-
-    reiniciarBtn.addEventListener('click', () => {
-        telaFinal.classList.add('hidden');
-        telaInicial.classList.remove('hidden');
-    });
-}
-
-inicializarOuvintes();
+export default Jogo;

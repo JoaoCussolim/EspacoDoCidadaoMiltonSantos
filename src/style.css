@@ -8,6 +8,15 @@ html {
     scroll-behavior: smooth;
 }
 
+#root, body, html {
+    height: 100%;
+    width: 100%;
+}
+
+#root > div, main {
+    width: 100%;
+}
+
 body {
     font-family: 'Roboto', sans-serif;
     background-color: #f4f4f4;
@@ -70,12 +79,12 @@ nav a {
 }
 
 nav a:hover {
-    color: #0056b3;
+    color: #0056b3; 
 }
 
 
 #inicio {
-    background-image: linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)), url('fundo-cidade.png');
+    background-image: linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)), url('./assets/fundo-cidade.png');
     background-size: cover;
     background-position: center;
     height: 100vh;
