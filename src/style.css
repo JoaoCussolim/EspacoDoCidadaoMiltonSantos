@@ -259,6 +259,24 @@ nav a:hover {
     color: #fff;
 }
 
+#podcast {
+    background-color: #fff;
+}
+
+#podcast p {
+    text-align: center;
+    max-width: 600px;
+    margin: 0 auto 40px auto;
+}
+
+#embed-iframe {
+    max-width: 800px;
+    margin: 0 auto;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+}
+
 footer {
     background-color: #333;
     color: #fff;

@@ -17,6 +17,7 @@ function HomePage() {
       <main>
         <Hero />
         <SobreLivro />
+        <Podcast />
         <SobreAutor />
         <Importancia />
         <Divulgacao />
